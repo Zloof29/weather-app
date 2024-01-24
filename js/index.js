@@ -5,21 +5,23 @@ const btn = document.querySelector(`#btn`);
 let array = [];
 
 btn.addEventListener(`click`, async function () {
-    if (!validateInputs(country.value, city.value)) {
-        return;
+    try {
+        if (!validateInputs(country.value, city.value)) {
+            return;
+        }
+        const apiKey = '7ecec48b68b14a4180784425242301';
+        const response = await fetch(`http://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${country.value.trim()},${city.value.trim()}`);
+        if(!response.ok) {
+            throw new Error(`Something went wrong. Error code: ${response.status}`);
+        }
+        const data = await response.json();
+        addElementToHtml(data);
+        array.push(data);
+        cleanInputs();
+        saveInLocalStorage();
+    } catch (error) {
+        displayErrorAlert(error);
     }
-    const apiKey = '7ecec48b68b14a4180784425242301';
-    const response = await fetch(`http://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${country.value.trim()},${city.value.trim()}`);
-    if(!response.ok){
-        displayErrorAlert(`Ops there was an error, please try again later`);
-        return;
-    }
-    const data = await response.json();
-
-    addElementToHtml(data);
-    array.push(data);
-    cleanInputs();
-    saveInLocalStorage();
 })
 
 function validateInputs(countryValue, cityValue) {
