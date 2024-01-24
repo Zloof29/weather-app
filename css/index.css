@@ -1,0 +1,13 @@
+.favoriteButton {
+    border: 0;
+    background-color: transparent;
+}
+
+.deleteButton {
+    border: 0;
+    background-color: transparent;
+}
+
+#alert {
+    display: none;
+}
