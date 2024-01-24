@@ -10,6 +10,10 @@ btn.addEventListener(`click`, async function () {
     }
     const apiKey = '7ecec48b68b14a4180784425242301';
     const response = await fetch(`http://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${country.value.trim()},${city.value.trim()}`);
+    if(!response.ok){
+        displayErrorAlert(`Ops there was an error, please try again later`);
+        return;
+    }
     const data = await response.json();
 
     addElementToHtml(data);
@@ -74,6 +78,18 @@ function favoriteButton(div) {
     })
 }
 
+function renderData(data) {
+    const newDiv = document.createElement('div');
+    newDiv.classList.add('border-bottom', 'pb-3', 'pt-3');
+    newDiv.innerHTML = `<div>${data.location.name} ${data.location.country} ${data.location.region}</div>
+      <div>${data.current.temp_c}</div>
+      <div>${data.current.condition.text} <img src="${data.current.condition.icon}"> <span class="d-none">${data.current.condition.code}</span></div>
+      <div>${data.current.last_updated}</div>`;
+    favoriteButton(newDiv);
+    createDeleteButton(newDiv);
+    display.appendChild(newDiv);
+}
+
 function userFavorite(div) {
     const index = Array.from(display.children).indexOf(div);
     if (index !== -1) {
@@ -83,17 +99,7 @@ function userFavorite(div) {
 
         display.innerHTML = '';
 
-        array.forEach(data => {
-            const newDiv = document.createElement('div');
-            newDiv.classList.add('border-bottom', 'pb-3', 'pt-3');
-            newDiv.innerHTML = `<div>${data.location.name} ${data.location.country} ${data.location.region}</div>
-          <div>${data.current.temp_c}</div>
-          <div>${data.current.condition.text} <img src="${data.current.condition.icon}"> <span class="d-none">${data.current.condition.code}</span></div>
-          <div>${data.current.last_updated}</div>`;
-            favoriteButton(newDiv);
-            createDeleteButton(newDiv);
-            display.appendChild(newDiv);
-        });
+        array.forEach(renderData);
     }
 }
 
